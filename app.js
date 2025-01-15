@@ -5,7 +5,7 @@ import userRouter from "./routes/user.route.js";
 
 const app = express();
 const corsOptions = {
-  origin:"http://localhost:3000",
+  origin: ["http://localhost:3000","https://shiny-xylophone-7vrg4wgqvqp6fpgjp-3000.app.github.dev/"],
   credentials: true,
   methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
   allowedHeaders: ["Content-Type", "Authorization"],
