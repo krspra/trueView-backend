@@ -2,7 +2,7 @@ import { connect } from "mongoose";
 import { algoliasearch } from "algoliasearch";
 import userModel from "../models/user.model.js";
 import dotenv from "dotenv";
-//configuring dotenv for algoliaClient as algoliaClient is not available to the app.js file as it's outside syncDataToAlgolia ,whereeas in app.js we have already configured dotenv.
+//configuring dotenv for algoliaClient as algoliaClient is not available to the app.js file as it's outside syncDataToAlgolia ,whereas in app.js we have already configured dotenv.
 dotenv.config();
 
 /*Initialize the Algolia client one time and we don't need to initialize it again and again 
@@ -40,5 +40,31 @@ const connectDB = async function () {
     console.log("Error in connecting to Database:", error);
   }
 };
+
+//RealTime sync between Algolia and Mongodb
+const changeStream = userModel.watch([], { fullDocument: "updateLookup" }); // Watch MongoDB collection
+
+changeStream.on("change", async (change) => {
+  if (change.operationType === "insert" || change.operationType === "update") {
+    const user = change.fullDocument;
+    await algoliaClient.saveObject({
+      indexName: "user",
+      body: {
+        photoURL: user.photoURL,
+        objectID: user._id.toString(),
+        username: user.username,
+      },
+    });
+    console.log("Record updated in Algolia");
+  }
+
+  if (change.operationType === "delete") {
+    const objectID = change.documentKey._id.toString();
+
+    // Delete record from Algolia
+    await algoliaClient.deleteObject({indexName:"user",objectID});
+    console.log("Record deleted from Algolia");
+  }
+});
 
 export default connectDB;
