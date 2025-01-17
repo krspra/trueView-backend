@@ -42,29 +42,43 @@ const connectDB = async function () {
 };
 
 //RealTime sync between Algolia and Mongodb
-const changeStream = userModel.watch([], { fullDocument: "updateLookup" }); // Watch MongoDB collection
+const connectChangeStream = () => {
+  const changeStream = userModel.watch([], { fullDocument: "updateLookup" });
 
-changeStream.on("change", async (change) => {
-  if (change.operationType === "insert" || change.operationType === "update") {
-    const user = change.fullDocument;
-    await algoliaClient.saveObject({
-      indexName: "user",
-      body: {
-        photoURL: user.photoURL,
-        objectID: user._id.toString(),
-        username: user.username,
-      },
-    });
-    console.log("Record updated in Algolia");
-  }
+  changeStream.on("change", async (change) => {
+    if (
+      change.operationType === "insert" ||
+      change.operationType === "update"
+    ) {
+      const user = change.fullDocument;
+      await algoliaClient.saveObject({
+        indexName: "user",
+        body: {
+          photoURL: user.photoURL,
+          objectID: user._id.toString(),
+          username: user.username,
+        },
+      });
+      console.log("Record updated in Algolia");
+    }
 
-  if (change.operationType === "delete") {
-    const objectID = change.documentKey._id.toString();
+    if (change.operationType === "delete") {
+      const objectID = change.documentKey._id.toString();
 
-    // Delete record from Algolia
-    await algoliaClient.deleteObject({indexName:"user",objectID});
-    console.log("Record deleted from Algolia");
-  }
-});
+      // Delete record from Algolia
+      await algoliaClient.deleteObject({ indexName: "user", objectID });
+      console.log("Record deleted from Algolia");
+    }
+  });
+
+  changeStream.on("error", (error) => {
+    console.error("Change Stream Error:", error);
+    if (error.code === "ECONNRESET") {
+      setTimeout(connectChangeStream, 1000);
+    }
+  });
+};
+
+connectChangeStream();
 
 export default connectDB;

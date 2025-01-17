@@ -1,9 +1,9 @@
 import userModel from "../models/user.model.js";
 
 const createuser = async function (req, res) {
-  let { username, email, photoURL } = req.body;
+  let { username, email, photoURL, bio } = req.body;
   try {
-    await userModel.create({ username, email, photoURL });
+    await userModel.create({ username, email, photoURL, bio });
     return res
       .status(200)
       .json({ message: "user created successfully", success: true });
@@ -39,6 +39,7 @@ const checkuser = async function (req, res) {
       message: "user exists",
       success: true,
       username: user.username,
+      bio: user.bio,
     });
   }
   return res.status(200).json({
@@ -63,10 +64,38 @@ const checkusernameavailibilty = async function (req, res) {
 };
 
 const removeAccessToken = function (req, res) {
-  // const {accessToken}=req.cookies;
   return res
     .clearCookie("accessToken")
     .status(200)
     .json({ message: "removed accessToken successfully", success: true });
 };
-export { createuser, checkuser, checkusernameavailibilty, removeAccessToken };
+
+const getUserInfo = async function (req, res) {
+  const { email, username } = req.body;
+  if (email) {
+    const user = await userModel.findOne({ email });
+    if (user) {
+      return res.status(200).json({ user, success: true });
+    } else {
+      return res.status(400).json({ message: "user not found", success: false });
+    }
+  }
+
+  if (username) {
+    const userNAME = username.toUpperCase();
+    const user = await userModel.findOne({ username:userNAME });
+    if (user) {
+      return res.status(200).json({ user, success: true });
+    } else {
+      return res.status(400).json({ message: "user not found", success: false });
+    }
+  }
+};
+
+export {
+  createuser,
+  checkuser,
+  checkusernameavailibilty,
+  removeAccessToken,
+  getUserInfo,
+};
