@@ -69,7 +69,6 @@ const removeAccessToken = async function (req, res) {
     .clearCookie("accessToken",{
       httpOnly: true,
       secure: true,
-      sameSite: "strict",
       path: "/",
   })
     .status(200)
