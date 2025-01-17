@@ -63,22 +63,6 @@ const checkusernameavailibilty = async function (req, res) {
   });
 };
 
-const removeAccessToken = async function (req, res) {
-  try {
-    return res
-    .clearCookie("accessToken",{
-      httpOnly: true,
-      secure: true,
-      path: "/",
-      sameSite:"None"
-  })
-    .status(200)
-    .json({ message: "removed accessToken successfully", success: true });
-  } catch (error) {
-    return res.status(400).json({error})
-  }
-};
-
 const getUserInfo = async function (req, res) {
   const { email, username } = req.body;
   if (email) {
@@ -105,6 +89,5 @@ export {
   createuser,
   checkuser,
   checkusernameavailibilty,
-  removeAccessToken,
   getUserInfo,
 };
