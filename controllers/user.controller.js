@@ -70,7 +70,7 @@ const removeAccessToken = async function (req, res) {
       httpOnly: true,
       secure: true,
       path: "/",
-      sameSite: "None"
+      sameSite:"None"
   })
     .status(200)
     .json({ message: "removed accessToken successfully", success: true });
