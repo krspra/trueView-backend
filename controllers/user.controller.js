@@ -65,7 +65,12 @@ const checkusernameavailibilty = async function (req, res) {
 
 const removeAccessToken = function (req, res) {
   return res
-    .clearCookie("accessToken")
+    .clearCookie("accessToken",{
+      httpOnly: true,
+      secure: true,
+      sameSite: "strict",
+      path: "/",
+  })
     .status(200)
     .json({ message: "removed accessToken successfully", success: true });
 };
