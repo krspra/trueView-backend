@@ -2,6 +2,7 @@ import express from "express";
 import cors from "cors";
 import cookieParser from "cookie-parser";
 import userRouter from "./routes/user.route.js";
+import ratingRouter from "./routes/rating.route.js";
 
 const app = express();
 const corsOptions = {
@@ -16,5 +17,6 @@ app.use(cookieParser());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use("/api/user/", userRouter);
+app.use("/api/rating",ratingRouter);
 
 export default app;
