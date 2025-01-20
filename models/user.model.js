@@ -18,6 +18,6 @@ const userSchema = new Schema({
   ratingCount:{type:Number,default:0},
 });
 
-const userModel = model("user", userSchema);
+const userModel = model("users", userSchema);
 
 export default userModel;

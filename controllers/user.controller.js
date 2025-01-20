@@ -33,13 +33,11 @@ const createuser = async function (req, res) {
 
 const checkuser = async function (req, res) {
   const { email } = req.body;
-  const user = await userModel.findOne({ email });
-  if (user) {
+  const userExists = await userModel.exists({ email });
+  if (userExists) {
     return res.status(200).json({
       message: "user exists",
       success: true,
-      username: user.username,
-      bio: user.bio,
     });
   }
   return res.status(200).json({
@@ -47,6 +45,7 @@ const checkuser = async function (req, res) {
     success: false,
   });
 };
+
 const checkusernameavailibilty = async function (req, res) {
   let { username } = req.body;
   username = username.toUpperCase();
