@@ -84,9 +84,33 @@ const getUserInfo = async function (req, res) {
   }
 };
 
+const getUserList= async function (req,res) {
+  const {currentPage}=req.body;
+  const limit=10;
+
+  try {
+    const users = await userModel.find()
+      .skip((currentPage - 1) * limit)
+      .limit(limit);
+
+    const totalUsers = await userModel.countDocuments();
+    const totalPages = Math.ceil(totalUsers / limit);
+
+    res.json({
+      users,
+      totalPages,
+      currentPage,
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ error: 'Error fetching users' });
+  }
+}
+
 export {
   createuser,
   checkuser,
   checkusernameavailibilty,
   getUserInfo,
+  getUserList
 };
