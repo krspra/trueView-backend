@@ -40,38 +40,41 @@ const calculateFinalAverageRating = async (userId) => {
               "$ratings.Helpfulness",
               "$ratings.CommunicationSkills",
               "$ratings.Hardworking",
-              "$ratings.Creative"
-            ]
-          }
-        }
+              "$ratings.Creative",
+            ],
+          },
+        },
       },
       {
         $group: {
           _id: "$ratedUser",
           totalSum: { $sum: "$totalRating" },
-          count: { $sum: 1 }
-        }
+          count: { $sum: 1 },
+        },
       },
       {
         $project: {
           _id: 0,
-          finalAverageRating: { $divide: ["$totalSum", { $multiply: ["$count", 10] }] }
-        }
-      }
+          totalSum: 1,
+          finalAverageRating: { $divide: ["$totalSum", { $multiply: ["$count", 10] }] },
+        },
+      },
     ]);
 
     if (result.length > 0) {
-      const user = await userModel.findById(userId);
-
-      if (user) {
-        user.overallRating = result[0].finalAverageRating;
-        await user.save();
-        return user;
-      } else {
-        console.log('User not found');
-      }
+      const { totalSum, finalAverageRating } = result[0];
+      await userModel.findByIdAndUpdate(userId, {
+        $set: {
+          overallRating: finalAverageRating,
+          ratingCount: totalSum,
+        },
+      });
+      return {
+        overallRating: finalAverageRating,
+        ratingCount: totalSum,
+      };
     } else {
-      console.log('No ratings found for this user');
+      console.log("No ratings found for this user");
     }
     return null;
   } catch (error) {
@@ -79,6 +82,9 @@ const calculateFinalAverageRating = async (userId) => {
     throw error;
   }
 };
+
+export default calculateFinalAverageRating;
+
 
 const ratinguser = async (req, res) => {
   const { ratedUser, givenBy, ratings } = req.body;
