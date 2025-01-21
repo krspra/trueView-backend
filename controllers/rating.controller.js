@@ -63,9 +63,10 @@ const calculateFinalAverageRating = async (userId) => {
 
     if (result.length > 0) {
       const { totalSum, finalAverageRating } = result[0];
+      const roundedoff=finalAverageRating.toFixed(2);
       await userModel.findByIdAndUpdate(userId, {
         $set: {
-          overallRating: finalAverageRating,
+          overallRating: roundedoff,
           ratingCount: totalSum,
         },
       });
