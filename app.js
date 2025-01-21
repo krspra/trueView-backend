@@ -6,7 +6,7 @@ import ratingRouter from "./routes/rating.route.js";
 
 const app = express();
 const corsOptions = {
-  origin: ["http://localhost:3000","https://true-view-frontend.vercel.app"],
+  origin: ["https://true-view-frontend.vercel.app"],
   credentials: true,
   methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
   allowedHeaders: ["Content-Type", "Authorization"],
