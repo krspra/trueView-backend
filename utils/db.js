@@ -47,8 +47,7 @@ const connectChangeStream = () => {
 
   changeStream.on("change", async (change) => {
     if (
-      change.operationType === "insert" ||
-      change.operationType === "update"
+      change.operationType === "insert"
     ) {
       const user = change.fullDocument;
       await algoliaClient.saveObject({
@@ -59,8 +58,10 @@ const connectChangeStream = () => {
           username: user.username,
         },
       });
-      console.log("Record updated in Algolia");
+      console.log("Record added in Algolia");
     }
+
+    //Now I have to also write code for change.operationType==="update"
 
     if (change.operationType === "delete") {
       const objectID = change.documentKey._id.toString();

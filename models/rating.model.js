@@ -23,14 +23,6 @@ const ratingSchema=new Schema({
         Hardworking: { type: Number, default: 0 },
         Creative: { type: Number, default: 0 },
     },
-    ratingAverage:{
-        type:Number,
-        default:0
-    },
-    ratingSum:{
-        type:Number,
-        default:0,
-    }
 });
 
 const ratingModel=model("ratings",ratingSchema);
