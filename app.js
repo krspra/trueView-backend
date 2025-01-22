@@ -3,6 +3,7 @@ import cors from "cors";
 import cookieParser from "cookie-parser";
 import userRouter from "./routes/user.route.js";
 import ratingRouter from "./routes/rating.route.js";
+import checkAuthenticated from "./middleware/authentication.js";
 
 const app = express();
 const corsOptions = {
@@ -16,7 +17,7 @@ app.options("*", cors(corsOptions));
 app.use(cookieParser());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use("/api/user/", userRouter);
-app.use("/api/rating/",ratingRouter);
+app.use("/api/user/",checkAuthenticated, userRouter);
+app.use("/api/rating/",checkAuthenticated,ratingRouter);
 
 export default app;
