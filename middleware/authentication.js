@@ -2,7 +2,7 @@ import { auth } from "../lib/firebaseAdmin.js";
 
 const checkAuthenticated=async(req,res,next)=>{
     try {
-        const accessToken = req.cookies?.accessToken;
+        const accessToken = await req.cookies?.accessToken;
         console.log(accessToken);
         if (!accessToken) {
             return res.status(401).json({ message: "No token provided", success: false });
