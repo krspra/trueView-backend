@@ -13,7 +13,7 @@ const corsOptions = {
   allowedHeaders: ["Content-Type", "Authorization","Cookie"],
 }
 app.use(cors(corsOptions));
-app.options("https://true-view-frontend.vercel.app", cors(corsOptions));
+app.options("*", cors(corsOptions));
 app.use(cookieParser());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
