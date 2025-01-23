@@ -6,22 +6,14 @@ import ratingRouter from "./routes/rating.route.js";
 import checkAuthenticated from "./middleware/authentication.js";
 
 const app = express();
-const whitelist = ["https://true-view-frontend.vercel.app",];
 const corsOptions = {
-  origin: (origin, callback) => {
-    if (whitelist.includes(origin) || !origin) {
-      callback(null, true);
-    } else {
-      callback(new Error("Not allowed by CORS"));
-    }
-  },
+  origin:"https://true-view-frontend.vercel.app",
   credentials: true,
   methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-  allowedHeaders: ["Content-Type", "Authorization", "Cookie"],
-};
-
+  allowedHeaders: ["Content-Type", "Authorization","Cookie"],
+}
 app.use(cors(corsOptions));
-
+app.options("https://true-view-frontend.vercel.app", cors(corsOptions));
 app.use(cookieParser());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
