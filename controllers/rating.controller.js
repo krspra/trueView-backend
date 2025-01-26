@@ -84,12 +84,13 @@ const calculateFinalAverageRating = async (userId) => {
   }
 };
 
-export default calculateFinalAverageRating;
-
-
 const ratinguser = async (req, res) => {
-  const { ratedUser, givenBy, ratings } = req.body;
+  const { ratedUser, ratings } = req.body;
+  const email=req.email;
+  
   try {
+    const loggedInUser=await userModel.findOne({email},{_id:1}).lean();
+    const givenBy=loggedInUser._id;
     const existingRating = await ratingModel.findOne({
       ratedUser,
       givenBy,
@@ -120,9 +121,12 @@ const ratinguser = async (req, res) => {
 };
 
 const getRatings = async (req, res) => {
-  const { ratedUser, givenBy } = req.body;
+  const { ratedUser } = req.body;
+  const email=req.email;
   try {
-    const ratingData = await ratingModel.findOne({ ratedUser, givenBy });
+    const loggedInUser=await userModel.findOne({email},{_id:1}).lean();
+    const givenBy=loggedInUser._id;
+    const ratingData = await ratingModel.findOne({ ratedUser, givenBy },{ratings:1,_id:0});
     if (ratingData) {
       return res.status(200).json({ ratingData, success: true });
     }

@@ -65,7 +65,7 @@ const checkusernameavailibilty = async function (req, res) {
 const getUserInfo = async function (req, res) {
   const { email, username } = req.body;
   if (email) {
-    const user = await userModel.findOne({ email });
+    const user = await userModel.findOne({ email },{_id:0,email:0});
     if (user) {
       return res.status(200).json({ user, success: true });
     } else {
@@ -75,7 +75,7 @@ const getUserInfo = async function (req, res) {
 
   if (username) {
     const userNAME = username.toUpperCase();
-    const user = await userModel.findOne({ username:userNAME });
+    const user = await userModel.findOne({ username:userNAME },{email:0});
     if (user) {
       return res.status(200).json({ user, success: true });
     } else {
@@ -89,7 +89,7 @@ const getUserList= async function (req,res) {
   const limit=10;
 
   try {
-    const users = await userModel.find()
+    const users = await userModel.find({},{username:1,photoURL:1,_id:0})
       .skip((currentPage - 1) * limit)
       .limit(limit);
 

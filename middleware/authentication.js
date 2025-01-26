@@ -10,9 +10,9 @@ const checkAuthenticated = async (req, res, next) => {
     const decodedToken = await auth.verifyIdToken(accessToken);
 
     if (!decodedToken?.email) {
-      throw new Error("Invalid token payload");
+      return res.status(401).json({ message: "Invalid token payload", success: false });
     }
-
+    req.email=decodedToken.email;
     next();
   } catch (error) {
     console.error("Error verifying token:", error.message);
