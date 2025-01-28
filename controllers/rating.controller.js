@@ -130,7 +130,7 @@ const getRatings = async (req, res) => {
     if (ratingData) {
       return res.status(200).json({ ratingData, success: true });
     }
-    return res.status(400).json({ message: "no rating data found", success: false });
+    return res.status(200).json({ message: "no rating data found", success: false });
   } catch (error) {
     return res.status(400).json({ message: "error fetching rating data", success: false });
   }
