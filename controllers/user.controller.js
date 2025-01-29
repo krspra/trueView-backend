@@ -65,31 +65,36 @@ const checkusernameavailibilty = async function (req, res) {
 const getUserInfo = async function (req, res) {
   const { email, username } = req.body;
   if (email) {
-    const user = await userModel.findOne({ email },{_id:0,email:0});
+    const user = await userModel.findOne({ email }, { _id: 0, email: 0 });
     if (user) {
       return res.status(200).json({ user, success: true });
     } else {
-      return res.status(400).json({ message: "user not found", success: false });
+      return res
+        .status(400)
+        .json({ message: "user not found", success: false });
     }
   }
 
   if (username) {
     const userNAME = username.toUpperCase();
-    const user = await userModel.findOne({ username:userNAME },{email:0});
+    const user = await userModel.findOne({ username: userNAME }, { email: 0 });
     if (user) {
       return res.status(200).json({ user, success: true });
     } else {
-      return res.status(400).json({ message: "user not found", success: false });
+      return res
+        .status(400)
+        .json({ message: "user not found", success: false });
     }
   }
 };
 
-const getUserList= async function (req,res) {
-  const {currentPage}=req.body;
-  const limit=10;
+const getUserList = async function (req, res) {
+  const { currentPage } = req.body;
+  const limit = 10;
 
   try {
-    const users = await userModel.find({},{username:1,photoURL:1,_id:0})
+    const users = await userModel
+      .find({}, { username: 1, photoURL: 1, _id: 0 })
       .skip((currentPage - 1) * limit)
       .limit(limit);
 
@@ -103,14 +108,27 @@ const getUserList= async function (req,res) {
     });
   } catch (error) {
     console.log(error);
-    res.status(500).json({ error: 'Error fetching users' });
+    res.status(500).json({ error: "Error fetching users" });
   }
-}
+};
 
+const updateUserInfo = async function (req, res) {
+  const { username, bio, photoURL } = req.body;
+  const email = req.email;
+  try {
+    const loggedInUser = await userModel.findOne({ email }).lean();
+    const userId = loggedInUser._id;
+    await userModel.findByIdAndUpdate(userId, { username, bio, photoURL });
+    return res.status(200).json({message:"profile updated successfully",success:true})
+  } catch (error) {
+    return res.status(400).json({message:"Cannot update user info",success:"false"});
+  }
+};
 export {
   createuser,
   checkuser,
   checkusernameavailibilty,
   getUserInfo,
-  getUserList
+  getUserList,
+  updateUserInfo
 };
