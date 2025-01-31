@@ -46,9 +46,7 @@ const connectChangeStream = () => {
   const changeStream = userModel.watch([], { fullDocument: "updateLookup" });
 
   changeStream.on("change", async (change) => {
-    if (
-      change.operationType === "insert"
-    ) {
+    if (change.operationType === "insert") {
       const user = change.fullDocument;
       await algoliaClient.saveObject({
         indexName: "user",
@@ -61,12 +59,26 @@ const connectChangeStream = () => {
       console.log("Record added in Algolia");
     }
 
-    //Now I have to also write code for change.operationType==="update"
+    if (change.operationType === "update") {
+      const updatedFields = change.updateDescription.updatedFields;
+
+      if (updatedFields.username || updatedFields.photoURL) {
+        const user = change.fullDocument;
+        await algoliaClient.partialUpdateObject({
+          indexName: "user",
+          objectID: user._id.toString(),
+          attributesToUpdate: {
+            username: user.username,
+            photoURL:user.photoURL
+          },
+        });
+        console.log("Record updated in Algolia");
+      }
+    }
 
     if (change.operationType === "delete") {
       const objectID = change.documentKey._id.toString();
 
-      // Delete record from Algolia
       await algoliaClient.deleteObject({ indexName: "user", objectID });
       console.log("Record deleted from Algolia");
     }
@@ -79,6 +91,7 @@ const connectChangeStream = () => {
     }
   });
 };
+
 
 connectChangeStream();
 
