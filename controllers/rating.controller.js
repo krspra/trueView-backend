@@ -91,6 +91,14 @@ const ratinguser = async (req, res) => {
   try {
     const loggedInUser=await userModel.findOne({email},{_id:1}).lean();
     const givenBy=loggedInUser._id;
+    if(ratedUser==givenBy){
+      return res.status(400).json({message:"you can't rate yourself",success:false})
+    }
+    for(let key in ratings){
+      if(ratings[key] < 0 || ratings[key] > 10){
+        return res.status(400).json({message:"invalid ratings",success:false})
+      }
+    }
     const existingRating = await ratingModel.findOne({
       ratedUser,
       givenBy,

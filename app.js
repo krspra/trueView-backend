@@ -8,7 +8,7 @@ import checkAuthenticated from "./middleware/authentication.js";
 const app = express();
 
 const corsOptions = {
-  origin: ["https://true-view-frontend.vercel.app","https://www.secrate.me"],
+  origin: ["https://true-view-frontend.vercel.app","http://localhost:3000","https://www.secrate.me"],
   credentials: true,
   methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
   allowedHeaders: ["Content-Type", "Authorization"],
@@ -21,7 +21,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 app.use((req, res, next) => {
-  const allowedReferers = ["https://true-view-frontend.vercel.app","https://www.secrate.me"];
+  const allowedReferers = ["https://true-view-frontend.vercel.app","http://localhost:3000","https://www.secrate.me"];
   const referer = req.headers.referer;
 
   if (!referer || !allowedReferers.some((allowed) => referer.startsWith(allowed))) {
